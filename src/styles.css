@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #ccd8ea;
+    width: 100%;
+    height: 100vh;
+    font-size: small;
+}
+
+.input-container {
+    border: 1.5px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.input-container:disabled {
+    background-color: rgba(240, 240, 240, 0.774);
+    opacity: 0.5;
+}
+
+.inputError {
+    border: 1.5px solid red;
+}
+
+.input-container:focus {
+    outline: none;
+}
