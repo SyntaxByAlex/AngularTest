@@ -2,8 +2,13 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.9.
 
-## Steps run
+## Steps to Run
 
-Run `npm install` for depen. 
-Run `npm install` for start serve.
-Enjoy 😅 
+1. **Install dependencies**  
+   Run `npm install` for depen.
+
+2. **Start the development server**  
+   Run `npm install` for start serve.
+
+3. **Enjoy** 😅
+
