@@ -6,11 +6,12 @@ import { ButtonComponent } from '../../components/button/button.component';
 import { Router } from '@angular/router';
 import { InputSearchDebouncedComponent } from '../../components/input-search-debounced/input-search-debounced.component';
 import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
+import { DialogComponent } from '../../components/dialog/dialog.component';
 
 @Component({
   selector: 'app-list-page',
   standalone: true,
-  imports: [CommonModule, InputSearchDebouncedComponent, ButtonComponent, DropdownMenuComponent],
+  imports: [CommonModule, InputSearchDebouncedComponent, ButtonComponent, DropdownMenuComponent, DialogComponent],
   templateUrl: './list-page.component.html',
   styleUrl: './list-page.component.css'
 })
@@ -25,10 +26,9 @@ export class ListPageComponent implements OnInit {
   private products: Product[] = [];
   public displayedProducts: Product[] = [];
   public itemsPerPage: number = 5;
-
-
-
-
+  public visible: boolean = false;
+  public messageDelete: string = ''
+  public productSelected?: Product;
   ngOnInit(): void {
     this.getProducts();
   }
@@ -73,6 +73,10 @@ export class ListPageComponent implements OnInit {
       {
         label: 'Editar',
         action: () => this.goToEditProduct(product)
+      },
+      {
+        label: 'Eliminar',
+        action: () => this.confirmDeleteProject(product)
       }
     ];
   }
@@ -81,4 +85,22 @@ export class ListPageComponent implements OnInit {
     this.productsService.changeProduct(product);
     this.router.navigateByUrl('products/edit');
   }
+
+  public confirmDeleteProject(product: Product): void {
+    this.productSelected = product; // Aquí puedes definir el tipo adecuado para tu producto
+    this.messageDelete = `Estas seguro de eliminar ${product.name}`
+    this.visible = true
+  }
+
+  public deleteProduct(): void {
+    this.productsService.delete(this.productSelected!.id).subscribe(() =>{
+      this.getProducts()
+      this.updateDisplayedProducts()
+    })
+  }
+
+  public toogleModal() {
+    this.visible = this.visible
+  }
+
 }

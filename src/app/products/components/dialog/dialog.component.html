@@ -1,0 +1,7 @@
+<div *ngIf="visible">
+    <span>{{message}}</span>
+    <div>
+        <app-button labelButton="Cancelar" severity="info" (clicked)="reject()" />
+        <app-button labelButton="Confirmar" severity="primary" (clicked)="accept()" />
+    </div>
+</div>

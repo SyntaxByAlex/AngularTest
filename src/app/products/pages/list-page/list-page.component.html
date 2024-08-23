@@ -47,6 +47,8 @@
             </div>
         </div>
 
-
+        <!--Dialog-->
+        <app-dialog [message]="messageDelete" [visible]="visible" (onReject)="toogleModal()"
+            (onAccept)="deleteProduct()" />
     </div>
 </div>

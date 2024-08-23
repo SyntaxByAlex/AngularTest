@@ -8,6 +8,8 @@ import { Product } from '../interfaces/product.interface';
 })
 export class ProductsService {
   private productSource = new BehaviorSubject<Product | null>(null);
+  private headers = { 'authorId': '1' };
+
   currentProduct = this.productSource.asObservable();
 
   private readonly baseUrl = 'https://tribu-ti-staffing-desarrollo-afangwbmcrhucqfh.z01.azurefd.net/ipf-msa-productosfinancieros/bp/products';
@@ -17,8 +19,7 @@ export class ProductsService {
   public get(): Observable<Product[]> {
     const url = this.baseUrl;
 
-    const headers = { 'authorId': '1' };
-    return this.http.get<Product[]>(url, { headers });
+    return this.http.get<Product[]>(url, { headers: this.headers });
   }
 
 
@@ -28,15 +29,21 @@ export class ProductsService {
 
   public post(body: Product): Observable<Product> {
     const url = this.baseUrl;
-    const headers = { 'authorId': '1' };
-    return this.http.post<Product>(url, body, { headers });
+    return this.http.post<Product>(url, body, { headers: this.headers });
   }
 
 
   public put(body: Product): Observable<Product> {
     const url = this.baseUrl;
-    const headers = { 'authorId': '1' };
-    return this.http.put<Product>(url, body, { headers });
+    return this.http.put<Product>(url, body, { headers: this.headers });
+  }
+
+  public delete(idProduct: string) {
+    const url = this.baseUrl;
+    const params = {
+      id: idProduct
+    }
+    return this.http.delete(url, { headers: this.headers, params })
   }
 
 }
