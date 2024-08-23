@@ -1,7 +1,14 @@
-<div *ngIf="visible">
-    <span>{{message}}</span>
-    <div>
-        <app-button labelButton="Cancelar" severity="info" (clicked)="reject()" />
-        <app-button labelButton="Confirmar" severity="primary" (clicked)="accept()" />
+<div class="modal-overlay" *ngIf="visible">
+    <div class="modal-container">
+        <div class="modal-items-container">
+            <span class="modal-title">¿Estás seguro de eliminar el producto de la tarjeta?</span>
+            <div style="width: 100%">
+                <hr>
+                <div class="modal-buttom-container">
+                    <app-button labelButton="Cancelar" severity="info" (clicked)="reject()" />
+                    <app-button labelButton="Confirmar" severity="primary" (clicked)="accept()" />
+                </div>
+            </div>
+        </div>
     </div>
 </div>

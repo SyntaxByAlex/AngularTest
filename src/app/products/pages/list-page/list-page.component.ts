@@ -42,26 +42,23 @@ export class ListPageComponent implements OnInit {
 
   public searchDebounced(value: string) {
     if (value === '') {
-      this.getProducts(); // Vuelve a obtener todos los productos si el valor está vacío
+      this.getProducts();
       return;
     }
 
-    // Filtra los productos según el valor de búsqueda
     this.displayedProducts = this.displayedProducts.filter(product =>
       product.name.toLowerCase().includes(value.toLowerCase())
-    ).slice(0, this.itemsPerPage); // Limita los resultados a itemsPerPage
+    ).slice(0, this.itemsPerPage);
   }
 
   private updateDisplayedProducts() {
-    // Actualiza los productos mostrados según itemsPerPage
     this.displayedProducts = this.products.slice(0, this.itemsPerPage);
   }
 
-  // Método para manejar el cambio en el selector
   public onRecordsPerPageChange(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
-    this.itemsPerPage = +selectElement.value; // Convierte el valor seleccionado a número
-    this.updateDisplayedProducts(); // Actualiza los productos mostrados
+    this.itemsPerPage = +selectElement.value;
+    this.updateDisplayedProducts();
   }
 
   public goToAddProduct() {
@@ -87,20 +84,20 @@ export class ListPageComponent implements OnInit {
   }
 
   public confirmDeleteProject(product: Product): void {
-    this.productSelected = product; // Aquí puedes definir el tipo adecuado para tu producto
-    this.messageDelete = `Estas seguro de eliminar ${product.name}`
+    this.productSelected = product;
+    this.messageDelete = `¿Estás seguro de eliminar el producto ${product.name}?`
     this.visible = true
   }
 
   public deleteProduct(): void {
-    this.productsService.delete(this.productSelected!.id).subscribe(() =>{
+    this.productsService.delete(this.productSelected!.id).subscribe(() => {
       this.getProducts()
-      this.updateDisplayedProducts()
+      this.toogleModal()
     })
   }
 
   public toogleModal() {
-    this.visible = this.visible
+    this.visible = !this.visible
   }
 
 }

@@ -29,6 +29,7 @@ export class DialogComponent {
 
   public reject(): void {
     this.onReject.emit()
+
   }
 
 

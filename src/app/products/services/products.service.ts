@@ -39,11 +39,11 @@ export class ProductsService {
   }
 
   public delete(idProduct: string) {
-    const url = this.baseUrl;
+    const url = this.baseUrl
     const params = {
       id: idProduct
     }
-    return this.http.delete(url, { headers: this.headers, params })
+    return this.http.delete(url, { headers: this.headers, params, responseType: 'text' })
   }
 
 }
