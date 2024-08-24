@@ -4,18 +4,18 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { InputSearchDebouncedComponent } from '../../components/input-search-debounced/input-search-debounced.component';
 import { ValidationService } from '../../../helpers/validation.service';
 import { CommonModule } from '@angular/common';
-import { FormFieldComponent } from '../../components/form-field/form-field.component';
 import { dateValidator } from '../../../helpers/custumValidations/validations';
 import { ProductsService } from '../../services/products.service';
 import { catchError, EMPTY } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../../interfaces/product.interface';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @Component({
   selector: 'app-save-edit-page',
   standalone: true,
-  imports: [ButtonComponent, ReactiveFormsModule, InputSearchDebouncedComponent, CommonModule,],
+  imports: [ButtonComponent, ReactiveFormsModule, InputSearchDebouncedComponent, CommonModule,HttpClientModule],
   templateUrl: './save-edit-page.component.html',
   styleUrl: './save-edit-page.component.css'
 })
@@ -24,6 +24,7 @@ export class SaveEditPageComponent implements OnInit {
 
   public projectForm: FormGroup;
   public labelButton: string = 'Enviar';
+  public idUnique: boolean = false;
 
   today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
 
@@ -137,6 +138,16 @@ export class SaveEditPageComponent implements OnInit {
     this.projectForm.patchValue({
       date_release: this.today,
       date_revision: this.addOneYear(new Date())
+    })
+  }
+
+  public validateId(idProduct: string) {
+    if (idProduct === "") {
+      this.idUnique = false
+      return
+    }
+    this.productsService.verify(idProduct).subscribe(res => {
+      this.idUnique = res
     })
   }
 

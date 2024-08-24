@@ -46,4 +46,11 @@ export class ProductsService {
     return this.http.delete(url, { headers: this.headers, params, responseType: 'text' })
   }
 
+  public verify(idProduct: string) {
+    const url = `${this.baseUrl}/verification`
+    const params = {
+      id: idProduct
+    }
+    return this.http.get<boolean>(url, { headers: this.headers, params })
+  }
 }

@@ -17,10 +17,10 @@ export class DialogComponent {
   public visible?: boolean;
 
   @Output()
-  private onAccept = new EventEmitter<any>();
+  public onAccept = new EventEmitter<any>();
 
   @Output()
-  private onReject = new EventEmitter<any>();
+  public onReject = new EventEmitter<any>();
 
 
   public accept(): void {

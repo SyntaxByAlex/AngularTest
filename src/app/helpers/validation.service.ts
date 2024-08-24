@@ -33,7 +33,6 @@ export class ValidationService {
         case 'minlength':
           return `Numero mínimo de caracteres permitidos ${errors['minlength'].requiredLength}`
 
-
       }
     }
 

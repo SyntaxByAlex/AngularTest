@@ -7,11 +7,13 @@ import { Router } from '@angular/router';
 import { InputSearchDebouncedComponent } from '../../components/input-search-debounced/input-search-debounced.component';
 import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-list-page',
   standalone: true,
-  imports: [CommonModule, InputSearchDebouncedComponent, ButtonComponent, DropdownMenuComponent, DialogComponent],
+  imports: [CommonModule, InputSearchDebouncedComponent, ButtonComponent, DropdownMenuComponent, DialogComponent,HttpClientModule],
+
   templateUrl: './list-page.component.html',
   styleUrl: './list-page.component.css'
 })
