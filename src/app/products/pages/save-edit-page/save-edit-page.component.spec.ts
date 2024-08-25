@@ -28,6 +28,8 @@ class MockRouter {
   navigateByUrl = jasmine.createSpy('navigateByUrl');
 }
 
+
+
 describe('SaveEditPageComponent', () => {
   let component: SaveEditPageComponent;
   let fixture: ComponentFixture<SaveEditPageComponent>;
@@ -55,8 +57,53 @@ describe('SaveEditPageComponent', () => {
     fixture.detectChanges();
   });
 
+  it('ngOnInit debería establecer labelButton como "Editar" y llamar a getProductToEdit si la URL contiene "edit"', () => {
+    spyOn(component, 'getProductToEdit').and.callThrough();
+
+    mockRouter.url = '/edit';
+    component.ngOnInit();
+    expect(component.labelButton).toBe('Editar');
+    expect(component.getProductToEdit).toHaveBeenCalled();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+
+  it('debería limpiar el formulario correctamente cuando la URL contiene "edit"', () => {
+    mockRouter.url = '/edit';
+    component.cleanProjectForm();
+    fixture.detectChanges();
+
+    // Verifica que solo los campos name, description y logo están vacíos
+    expect(component.projectForm.get('name')?.value).toBe('');
+    expect(component.projectForm.get('description')?.value).toBe('');
+    expect(component.projectForm.get('logo')?.value).toBe('');
+
+    // Verifica que date_release y date_revision están establecidos con valores correctos
+    expect(component.projectForm.get('date_release')?.value).toBe(component.today);
+    expect(component.projectForm.get('date_revision')?.value).toBe(component.addOneYear(new Date()));
+
+    // Verifica que el campo id está intacto y no ha sido alterado (si es necesario)
+    expect(component.projectForm.get('id')?.value).toBe('');
+  });
+
+  it('debería limpiar el formulario completamente cuando la URL no contiene "edit"', () => {
+    mockRouter.url = '/create';
+    component.cleanProjectForm();
+    fixture.detectChanges();
+
+    // Verifica que todos los campos del formulario están vacíos
+    expect(component.projectForm.get('id')?.value).toBe(null);
+    expect(component.projectForm.get('name')?.value).toBe(null);
+    expect(component.projectForm.get('description')?.value).toBe(null);
+    expect(component.projectForm.get('logo')?.value).toBe(null);
+
+
+    // Verifica que los campos id y date_revision están correctamente resetados
+    expect(component.projectForm.get('date_release')?.value).toEqual(component.today);
+    expect(component.projectForm.get('date_revision')?.value).toEqual(component.addOneYear(new Date()));
   });
 
   it('deberia inicialar el formulario con los valores por defecto', () => {
@@ -102,5 +149,57 @@ describe('SaveEditPageComponent', () => {
     expect(component.projectForm.get('id')?.disabled).toBeTrue();
   });
 
+  it('should handle response from verify method correctly', () => {
+    const testId = 'test-id';
+    const mockResponse = false;
+    mockProductService.verify.and.returnValue(of(mockResponse));
+
+    component.validateId(testId);
+    fixture.whenStable().then(() => {
+      expect(component.idUnique).toBe(mockResponse);
+    });
+  });
+
+
+  it('Deberia llamar editProject si la url tiene edit', () => {
+    spyOn(component as any, 'editProject');
+    mockRouter.url = '/edit';
+
+    component.projectForm.setValue({
+      id: '123',
+      name: 'Test Product',
+      description: 'Test Description',
+      logo: 'test-logo.png',
+      date_release: '2024-01-01',
+      date_revision: '2025-01-01'
+    });
+
+    component.saveEditProject();
+
+    const product: Product = component.projectForm.getRawValue();
+    expect((component as any).editProject).toHaveBeenCalledWith(product);
+  });
+
+
+  it('deberia llamar saveProject si la url no contiene edit', () => {
+    spyOn(component as any, 'saveProject'); // Espía el método saveProject
+    mockRouter.url = '/create'; // Simula que estamos en una página de creación
+
+    // Configura el formulario con valores de prueba
+    component.projectForm.setValue({
+      id: '123',
+      name: 'Test Product',
+      description: 'Test Description',
+      logo: 'test-logo.png',
+      date_release: '2024-01-01',
+      date_revision: '2025-01-01'
+    });
+
+    component.saveEditProject();
+
+    // Verifica que saveProject ha sido llamado
+    const product: Product = component.projectForm.getRawValue();
+    expect((component as any).saveProject).toHaveBeenCalledWith(product);
+  });
 
 });

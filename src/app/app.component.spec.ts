@@ -15,8 +15,12 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deberia seriar el idAuthoy en localStorage', () => {
+  it('deberia setear el idAuthoy en localStorage', () => {
     component.ngOnInit();
     expect(localStorage.getItem('idAuthor')).toBe('1750050211');
   });
+
+  
+
+  
 });

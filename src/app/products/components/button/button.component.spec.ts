@@ -59,4 +59,6 @@ describe('ButtonComponent', () => {
     buttonElement.triggerEventHandler('click', null);
     expect(component.clicked.emit).toHaveBeenCalled();
   });
+
+  
 });
