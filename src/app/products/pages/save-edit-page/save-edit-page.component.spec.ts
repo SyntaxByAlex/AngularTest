@@ -2,19 +2,56 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SaveEditPageComponent } from './save-edit-page.component';
 import { By } from '@angular/platform-browser';
+import { BehaviorSubject, of } from 'rxjs';
+import { Product } from '../../interfaces/product.interface';
+import { ProductService } from '../../services/product.service';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ValidationService } from '../../../helpers/validation.service';
+import { Router } from '@angular/router';
+
+class MockProductService {
+  private mockProductSource = new BehaviorSubject<Product | null>(null);
+  currentProduct = this.mockProductSource.asObservable();
+
+  get = jasmine.createSpy('get').and.returnValue(of([]));
+  delete = jasmine.createSpy('delete').and.returnValue(of(''));
+  changeProduct = jasmine.createSpy('changeProduct').and.callFake((product: Product) => {
+    this.mockProductSource.next(product);
+  });
+  post = jasmine.createSpy('post').and.returnValue(of({} as Product));
+  put = jasmine.createSpy('put').and.returnValue(of({} as Product));
+  verify = jasmine.createSpy('verify').and.returnValue(of(true));
+}
+
+class MockRouter {
+  url: string = '';
+  navigateByUrl = jasmine.createSpy('navigateByUrl');
+}
 
 describe('SaveEditPageComponent', () => {
   let component: SaveEditPageComponent;
   let fixture: ComponentFixture<SaveEditPageComponent>;
+  let mockProductService: MockProductService;
+  let mockRouter: MockRouter;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SaveEditPageComponent]
-    })
-    .compileComponents();
-    
+      imports: [
+        ReactiveFormsModule,
+        SaveEditPageComponent, // Import the standalone component
+      ],
+      providers: [
+        FormBuilder,
+        ValidationService,
+        { provide: ProductService, useClass: MockProductService },
+        { provide: Router, useClass: MockRouter }
+      ]
+    }).compileComponents();
+
     fixture = TestBed.createComponent(SaveEditPageComponent);
     component = fixture.componentInstance;
+    mockProductService = TestBed.inject(ProductService) as unknown as MockProductService;
+    mockRouter = TestBed.inject(Router) as unknown as MockRouter;
     fixture.detectChanges();
   });
 
@@ -22,7 +59,7 @@ describe('SaveEditPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debería inicializar el formulario con valores predeterminados', () => {
+  it('deberia inicialar el formulario con los valores por defecto', () => {
     expect(component.projectForm.get('id')?.value).toBe('');
     expect(component.projectForm.get('name')?.value).toBe('');
     expect(component.projectForm.get('description')?.value).toBe('');
@@ -31,13 +68,39 @@ describe('SaveEditPageComponent', () => {
     expect(component.projectForm.get('date_revision')?.value).toBeNull();
   });
 
-  it('debería validar el campo ID y mostrar el mensaje de error si es inválido', () => {
+  it('deberia validar campo id y mostar mensaje de invalido', () => {
     const idControl = component.projectForm.get('id');
     idControl?.setValue('');
     idControl?.markAsTouched();
     fixture.detectChanges();
     const errorMsg = fixture.debugElement.query(By.css('.messageValidation')).nativeElement;
-    expect(errorMsg.textContent).toContain('Este campo es requerido ');
+    expect(errorMsg.textContent).toContain('Este campo es requerido');
   });
+
+  it('deberia actualizar el formulario de proct cuando es edit', () => {
+    const testProduct: Product = {
+      id: '123',
+      name: 'Test Product',
+      description: 'Test Description',
+      logo: 'test-logo.png',
+      date_release: new Date('2024-01-01'),
+      date_revision: new Date('2024-01-01')
+    };
+
+    mockProductService.changeProduct(testProduct);
+    fixture.detectChanges();
+
+    component.getProductToEdit();
+    fixture.detectChanges();
+
+    expect(component.projectForm.get('id')?.value).toBe(testProduct.id);
+    expect(component.projectForm.get('name')?.value).toBe(testProduct.name);
+    expect(component.projectForm.get('description')?.value).toBe(testProduct.description);
+    expect(component.projectForm.get('logo')?.value).toBe(testProduct.logo);
+    expect(component.projectForm.get('date_release')?.value).toBe('2024-01-01');
+    expect(component.projectForm.get('date_revision')?.value).toBe('2024-01-01');
+    expect(component.projectForm.get('id')?.disabled).toBeTrue();
+  });
+
 
 });

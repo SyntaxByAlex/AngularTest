@@ -6,15 +6,20 @@ import { Product } from '../interfaces/product.interface';
 @Injectable({
   providedIn: 'root'
 })
-export class ProductsService {
+export class ProductService {
   private productSource = new BehaviorSubject<Product | null>(null);
-  private headers = { 'authorId': '1' };
+  private idAuthor: string | null = localStorage.getItem('idAuthor')
+
+  private headers = {
+    'authorId': this.idAuthor || 'defaultId'
+  };
 
   currentProduct = this.productSource.asObservable();
 
   private readonly baseUrl = 'https://tribu-ti-staffing-desarrollo-afangwbmcrhucqfh.z01.azurefd.net/ipf-msa-productosfinancieros/bp/products';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   public get(): Observable<Product[]> {
     const url = this.baseUrl;

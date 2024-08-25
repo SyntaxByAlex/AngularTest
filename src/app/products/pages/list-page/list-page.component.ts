@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductsService } from '../../services/products.service';
 import { Product } from '../../interfaces/product.interface';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../../components/button/button.component';
@@ -8,11 +7,12 @@ import { InputSearchDebouncedComponent } from '../../components/input-search-deb
 import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-list-page',
   standalone: true,
-  imports: [CommonModule, InputSearchDebouncedComponent, ButtonComponent, DropdownMenuComponent, DialogComponent,HttpClientModule],
+  imports: [CommonModule, InputSearchDebouncedComponent, ButtonComponent, DropdownMenuComponent, DialogComponent, HttpClientModule],
 
   templateUrl: './list-page.component.html',
   styleUrl: './list-page.component.css'
@@ -21,11 +21,11 @@ export class ListPageComponent implements OnInit {
 
 
   constructor(
-    private productsService: ProductsService,
+    private productsService: ProductService,
     private router: Router,
   ) { }
 
-  private products: Product[] = [];
+  public products: Product[] = [];
   public displayedProducts: Product[] = [];
   public itemsPerPage: number = 5;
   public visible: boolean = false;
@@ -35,7 +35,7 @@ export class ListPageComponent implements OnInit {
     this.getProducts();
   }
 
-  private getProducts() {
+  public getProducts() {
     this.productsService.get().subscribe(res => {
       this.products = res;
       this.updateDisplayedProducts(); // Actualiza los productos mostrados al obtener los datos
@@ -53,7 +53,7 @@ export class ListPageComponent implements OnInit {
     ).slice(0, this.itemsPerPage);
   }
 
-  private updateDisplayedProducts() {
+  public updateDisplayedProducts() {
     this.displayedProducts = this.products.slice(0, this.itemsPerPage);
   }
 
