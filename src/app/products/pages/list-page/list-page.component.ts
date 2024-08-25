@@ -8,11 +8,20 @@ import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-m
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ProductService } from '../../services/product.service';
+import { SqueletonComponent } from '../../components/squeleton/squeleton.component';
+import { catchError, EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-list-page',
   standalone: true,
-  imports: [CommonModule, InputSearchDebouncedComponent, ButtonComponent, DropdownMenuComponent, DialogComponent, HttpClientModule],
+  imports: [
+    CommonModule,
+    InputSearchDebouncedComponent,
+    ButtonComponent,
+    DropdownMenuComponent,
+    DialogComponent,
+    HttpClientModule,
+    SqueletonComponent],
 
   templateUrl: './list-page.component.html',
   styleUrl: './list-page.component.css'
@@ -31,14 +40,21 @@ export class ListPageComponent implements OnInit {
   public visible: boolean = false;
   public messageDelete: string = ''
   public productSelected?: Product;
+  public isLoading: boolean = true;
   ngOnInit(): void {
     this.getProducts();
   }
 
   public getProducts() {
-    this.productsService.get().subscribe(res => {
+    this.productsService.get().pipe(
+      catchError(err => {
+        this.isLoading = false
+        return EMPTY
+      })
+    ).subscribe(res => {
       this.products = res;
-      this.updateDisplayedProducts(); // Actualiza los productos mostrados al obtener los datos
+      this.updateDisplayedProducts();
+      this.isLoading = false
     });
   }
 
