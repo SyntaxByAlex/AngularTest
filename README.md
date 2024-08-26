@@ -5,7 +5,10 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Steps to Run
 
 1. **Install dependencies**  
-   Run `npm install` for depen.
+   Run `npm install` for intall dependencies.
+
+1. **Install angular**  
+Run `npm install -g @angular/cli` for intall angular.
 
 2. **Start the development server**  
    Run `npm install` for start serve.
