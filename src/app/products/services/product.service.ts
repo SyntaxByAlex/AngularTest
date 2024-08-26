@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Product } from '../interfaces/product.interface';
+import { environment } from '../../../environment/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class ProductService {
 
   currentProduct = this.productSource.asObservable();
 
-  private readonly baseUrl = 'https://tribu-ti-staffing-desarrollo-afangwbmcrhucqfh.z01.azurefd.net/ipf-msa-productosfinancieros/bp/products';
+  private readonly baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {
   }

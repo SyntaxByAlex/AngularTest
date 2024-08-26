@@ -109,7 +109,11 @@ export class ListPageComponent implements OnInit {
   }
 
   public deleteProduct(): void {
-    this.productsService.delete(this.productSelected!.id).subscribe(() => {
+    this.isLoading = true
+    this.productsService.delete(this.productSelected!.id).pipe(catchError(err => {
+      this.isLoading = false
+      return EMPTY
+    })).subscribe(() => {
       this.getProducts()
       this.toogleModal()
     })

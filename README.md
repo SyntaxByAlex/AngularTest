@@ -11,7 +11,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 Run `npm install -g @angular/cli` for intall angular.
 
 2. **Start the development server**  
-   Run `npm install` for start serve.
+   Run `ng serve` for start serve.
 
 3. **Enjoy** 😅
 
