@@ -12,23 +12,9 @@ import { ButtonComponent } from '../../components/button/button.component';
 import { InputSearchDebouncedComponent } from '../../components/input-search-debounced/input-search-debounced.component';
 import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
+import { MockProductService } from '../../../helpers/classes/MockProductService';
 
 
-class MockProductService {
-  // Simula el BehaviorSubject del servicio
-  private mockProductSource = new BehaviorSubject<Product | null>(null);
-  currentProduct = this.mockProductSource.asObservable();
-
-  // Métodos simulados
-  get = jasmine.createSpy('get').and.returnValue(of([]));
-  delete = jasmine.createSpy('delete').and.returnValue(of(''));
-  changeProduct = jasmine.createSpy('changeProduct').and.callFake((product: Product) => {
-    this.mockProductSource.next(product);
-  });
-  post = jasmine.createSpy('post').and.returnValue(of({} as Product));
-  put = jasmine.createSpy('put').and.returnValue(of({} as Product));
-  verify = jasmine.createSpy('verify').and.returnValue(of(true));
-}
 
 describe('ListPageComponent', () => {
   let component: ListPageComponent;
@@ -66,7 +52,7 @@ describe('ListPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-   it('debería llamar a getProducts cuando el valor de búsqueda esté vacío', () => {
+  it('debería llamar a getProducts cuando el valor de búsqueda esté vacío', () => {
     spyOn(component, 'getProducts'); // Espía en el método getProducts
     component.searchDebounced('');
     expect(component.getProducts).toHaveBeenCalled();

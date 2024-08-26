@@ -14,22 +14,19 @@
 
 .disabled {
     cursor: not-allowed;
-    /* Cambia el cursor para indicar que no es interactivo */
     opacity: 0.5;
-    /* Hace que el botón se vea opaco */
     pointer-events: none;
-    /* Deshabilita la interacción con el botón */
 }
 
 .button:active {
-   opacity: 0.8;
+    opacity: 0.8;
 }
 
 
 .primary {
-    background-color: #f2d732;
+    background-color: var(--secondaryColor);
 }
 
 .info {
-    background-color: #ccd8ea;
+    background-color: var(--primaryColor);
 }

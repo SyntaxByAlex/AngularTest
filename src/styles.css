@@ -1,12 +1,8 @@
-
 :root {
     --primaryColor: #ccd8ea;
+    --secondaryColor: #f2d732;
     --border-color: #ccc;
-    --disabled-background-color: rgba(240, 240, 240, 0.774);
-    --disabled-opacity: 0.5;
     --error-border-color: red;
-    --focus-border-color: #007bff; /* Example color */
-    --focus-box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Example shadow */
 }
 
 /* main.css */
@@ -28,16 +24,14 @@ body {
 }
 
 .input-container:disabled {
-    background-color: var(--disabled-background-color);
-    opacity: var(--disabled-opacity);
+    background-color: rgba(240, 240, 240, 0.774);
+    opacity: 0.5;
 }
 
 .inputError {
-    border: 1.5px solid var(--error-border-color);
+    border: 1.5px solid red;
 }
 
 .input-container:focus {
-    border-color: var(--focus-border-color);
-    box-shadow: var(--focus-box-shadow);
     outline: none;
 }

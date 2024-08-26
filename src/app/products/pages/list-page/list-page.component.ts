@@ -41,6 +41,7 @@ export class ListPageComponent implements OnInit {
   public messageDelete: string = ''
   public productSelected?: Product;
   public isLoading: boolean = true;
+
   ngOnInit(): void {
     this.getProducts();
   }
