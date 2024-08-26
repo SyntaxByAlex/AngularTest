@@ -4,18 +4,18 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { InputSearchDebouncedComponent } from '../../components/input-search-debounced/input-search-debounced.component';
 import { ValidationService } from '../../../helpers/validation.service';
 import { CommonModule } from '@angular/common';
-import { FormFieldComponent } from '../../components/form-field/form-field.component';
 import { dateValidator } from '../../../helpers/custumValidations/validations';
-import { ProductsService } from '../../services/products.service';
 import { catchError, EMPTY } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../../interfaces/product.interface';
+import { HttpClientModule } from '@angular/common/http';
+import { ProductService } from '../../services/product.service';
 
 
 @Component({
   selector: 'app-save-edit-page',
   standalone: true,
-  imports: [ButtonComponent, ReactiveFormsModule, InputSearchDebouncedComponent, CommonModule,],
+  imports: [ButtonComponent, ReactiveFormsModule, InputSearchDebouncedComponent, CommonModule, HttpClientModule],
   templateUrl: './save-edit-page.component.html',
   styleUrl: './save-edit-page.component.css'
 })
@@ -24,13 +24,14 @@ export class SaveEditPageComponent implements OnInit {
 
   public projectForm: FormGroup;
   public labelButton: string = 'Enviar';
+  public idUnique: boolean = false;
 
   today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
 
   constructor(
     private fb: FormBuilder,
     private validationService: ValidationService,
-    private productsService: ProductsService,
+    private productsService: ProductService,
     private router: Router) {
 
     this.projectForm = this.fb.group({
@@ -45,6 +46,7 @@ export class SaveEditPageComponent implements OnInit {
 
 
   }
+  
   ngOnInit(): void {
     if (this.router.url.includes('edit')) {
       this.labelButton = 'Editar';
@@ -53,13 +55,14 @@ export class SaveEditPageComponent implements OnInit {
   }
 
 
-  private getProductToEdit(): void {
+  public getProductToEdit(): void {
     this.productsService.currentProduct.subscribe(product => {
       if (product) {
-        this.projectForm.patchValue(product);
-        let dateRelease = new Date(product.date_release).toISOString().split('T')[0];
-        let dateRevision = new Date(product.date_revision).toISOString().split('T')[0];
-        this.projectForm.patchValue({ date_release: dateRelease, date_revision: dateRevision })
+        this.projectForm.patchValue({
+          ...product,
+          date_release: product.date_release ? new Date(product.date_release).toISOString().split('T')[0] : null,
+          date_revision: product.date_revision ? new Date(product.date_revision).toISOString().split('T')[0] : null
+        });
         this.projectForm.get('date_release')?.clearValidators();
         this.projectForm.get('date_release')?.setValidators([Validators.required]);
         this.projectForm.get('date_release')?.updateValueAndValidity();
@@ -81,7 +84,7 @@ export class SaveEditPageComponent implements OnInit {
   }
 
 
-  private addOneYear(date: Date): String {
+  public addOneYear(date: Date): String {
     const newDate = new Date(date);
     newDate.setFullYear(newDate.getFullYear() + 1);
     return newDate.toISOString().split('T')[0];
@@ -97,7 +100,9 @@ export class SaveEditPageComponent implements OnInit {
 
   }
 
-  private saveProject(data: Product): void {
+
+
+  public saveProject(data: Product): void {
     this.productsService.post(data).pipe(
       catchError((err) => {
         console.log(err);
@@ -110,7 +115,7 @@ export class SaveEditPageComponent implements OnInit {
       });
   }
 
-  private editProject(data: Product): void {
+  public editProject(data: Product): void {
     this.productsService.put(data).pipe(
       catchError((err) => {
         console.log(err);
@@ -129,14 +134,25 @@ export class SaveEditPageComponent implements OnInit {
         name: '',
         description: '',
         logo: '',
-      })
+      });
     } else {
-      this.projectForm.reset();
+      this.projectForm.reset(); // Resetea todos los campos del formulario
     }
 
+    // Asegúrate de que estas fechas están en el formato correcto
     this.projectForm.patchValue({
       date_release: this.today,
       date_revision: this.addOneYear(new Date())
+    });
+  }
+
+  public validateId(idProduct: string) {
+    if (idProduct === "") {
+      this.idUnique = false
+      return
+    }
+    this.productsService.verify(idProduct).subscribe(res => {
+      this.idUnique = res
     })
   }
 

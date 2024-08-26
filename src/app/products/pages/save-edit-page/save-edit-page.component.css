@@ -53,3 +53,14 @@
 .messageValidation {
     color: red;
 }
+
+@media (max-width: 768px) {
+    .formContainer {
+        grid-template-columns: 1fr;
+    }
+
+    .form-container {
+        width: 90%;
+
+    }
+}

@@ -13,9 +13,11 @@
             <div class="formContainer">
                 <div class="itemContainer">
                     <label class="label">ID</label>
-                    <input class="input-container" [class.inputError]="isValidField('id')" type="text" placeholder="ID"
+                    <input class="input-container" #idProd (blur)="validateId(idProd.value)"
+                        [class.inputError]="isValidField('id')|| idUnique" type="text" placeholder="ID"
                         formControlName="id">
                     <small class="messageValidation" *ngIf="isValidField('id')">{{getFieldError('id')}}</small>
+                    <small class="messageValidation" *ngIf="idUnique">El id ya existe,use otro</small>
                 </div>
 
                 <div class="itemContainer">
@@ -59,7 +61,7 @@
             <div class="buttonContainer">
                 <app-button labelButton="Reiniciar" severity="info" (click)="cleanProjectForm()" />
                 <app-button [labelButton]="labelButton" typeInput="submit" severity="primary"
-                    [disabled]="projectForm.invalid" />
+                    [disabled]="projectForm.invalid  || idUnique" />
             </div>
         </form>
 

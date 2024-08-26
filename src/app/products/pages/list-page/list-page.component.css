@@ -29,9 +29,8 @@
     overflow: auto;
 }
 
-::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 90px;
+.squeletonContianer {
+    height: 300px;
 }
 
 table {

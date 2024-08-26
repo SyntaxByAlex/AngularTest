@@ -1,16 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductsService } from '../../services/products.service';
 import { Product } from '../../interfaces/product.interface';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../../components/button/button.component';
 import { Router } from '@angular/router';
 import { InputSearchDebouncedComponent } from '../../components/input-search-debounced/input-search-debounced.component';
 import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
+import { DialogComponent } from '../../components/dialog/dialog.component';
+import { HttpClientModule } from '@angular/common/http';
+import { ProductService } from '../../services/product.service';
+import { SqueletonComponent } from '../../components/squeleton/squeleton.component';
+import { catchError, EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-list-page',
   standalone: true,
-  imports: [CommonModule, InputSearchDebouncedComponent, ButtonComponent, DropdownMenuComponent],
+  imports: [
+    CommonModule,
+    InputSearchDebouncedComponent,
+    ButtonComponent,
+    DropdownMenuComponent,
+    DialogComponent,
+    HttpClientModule,
+    SqueletonComponent],
+
   templateUrl: './list-page.component.html',
   styleUrl: './list-page.component.css'
 })
@@ -18,50 +30,53 @@ export class ListPageComponent implements OnInit {
 
 
   constructor(
-    private productsService: ProductsService,
+    private productsService: ProductService,
     private router: Router,
   ) { }
 
-  private products: Product[] = [];
+  public products: Product[] = [];
   public displayedProducts: Product[] = [];
   public itemsPerPage: number = 5;
-
-
-
-
+  public visible: boolean = false;
+  public messageDelete: string = ''
+  public productSelected?: Product;
+  public isLoading: boolean = true;
   ngOnInit(): void {
     this.getProducts();
   }
 
-  private getProducts() {
-    this.productsService.get().subscribe(res => {
+  public getProducts() {
+    this.productsService.get().pipe(
+      catchError(err => {
+        this.isLoading = false
+        return EMPTY
+      })
+    ).subscribe(res => {
       this.products = res;
-      this.updateDisplayedProducts(); // Actualiza los productos mostrados al obtener los datos
+      this.updateDisplayedProducts();
+      this.isLoading = false
     });
   }
 
   public searchDebounced(value: string) {
     if (value === '') {
-      this.getProducts(); // Vuelve a obtener todos los productos si el valor está vacío
+      this.getProducts();
       return;
     }
 
-    // Filtra los productos según el valor de búsqueda
     this.displayedProducts = this.displayedProducts.filter(product =>
       product.name.toLowerCase().includes(value.toLowerCase())
-    ).slice(0, this.itemsPerPage); // Limita los resultados a itemsPerPage
+    ).slice(0, this.itemsPerPage);
   }
 
-  private updateDisplayedProducts() {
-    // Actualiza los productos mostrados según itemsPerPage
+  public updateDisplayedProducts() {
     this.displayedProducts = this.products.slice(0, this.itemsPerPage);
   }
 
-  // Método para manejar el cambio en el selector
   public onRecordsPerPageChange(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
-    this.itemsPerPage = +selectElement.value; // Convierte el valor seleccionado a número
-    this.updateDisplayedProducts(); // Actualiza los productos mostrados
+    this.itemsPerPage = +selectElement.value;
+    this.updateDisplayedProducts();
   }
 
   public goToAddProduct() {
@@ -73,6 +88,10 @@ export class ListPageComponent implements OnInit {
       {
         label: 'Editar',
         action: () => this.goToEditProduct(product)
+      },
+      {
+        label: 'Eliminar',
+        action: () => this.confirmDeleteProject(product)
       }
     ];
   }
@@ -81,4 +100,22 @@ export class ListPageComponent implements OnInit {
     this.productsService.changeProduct(product);
     this.router.navigateByUrl('products/edit');
   }
+
+  public confirmDeleteProject(product: Product): void {
+    this.productSelected = product;
+    this.messageDelete = `¿Estás seguro de eliminar el producto ${product.name}?`
+    this.visible = true
+  }
+
+  public deleteProduct(): void {
+    this.productsService.delete(this.productSelected!.id).subscribe(() => {
+      this.getProducts()
+      this.toogleModal()
+    })
+  }
+
+  public toogleModal() {
+    this.visible = !this.visible
+  }
+
 }
